@@ -1,14 +1,16 @@
+//очистка таблицы и вывод поясняющей строки
 function showWarning(str) {
   $("#info").empty();
   $("#warning").html(str);
 }
 
+//очистка прежнего текста и заполнение таблицы
 function showInfo(selectedDate) {
-  $("#warning").empty();
-  $("#info").empty();
+  clearText();
   fillTable(selectedDate);
 }
 
+// заполнение таблицы рассчитанными данными
 function fillTable(selectedDate) {
   $("#info").append(`
     <tr>
@@ -26,6 +28,13 @@ function fillTable(selectedDate) {
   `);
 }
 
+// обновление оставшегося времени до указанной даты
 function updateTime(selectedDate) {
   $("#leftTime").html(`${getTimeLeft(selectedDate)}`);
+}
+
+// очистка тега <p> и <table>
+function clearText() {
+  $("#warning").empty();
+  $("#info").empty();
 }

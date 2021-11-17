@@ -3,58 +3,68 @@ const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 const MAX_DATE = new Date(new Date().setFullYear(new Date().getFullYear() + MAX_ADDED_YEAR));
 let timerId;
 
-$(":input").on("change", function() {
+// отслеживание измения поля даты
+$(':input').on('change', function() {
   if (timerId) {
     clearInterval(timerId);
   }
 
-  let selectedDate = new Date($(this).val());
-  selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(),
-                          0, 0, 0);
-
-  if (/*isNaN(selectedDate.getTime())*/!$(this).val()) {
-    /*console.log($(this).val());
-    showWarning("Введена дата некорректного формата.");*/
-    $("#warning").empty();
-    $("#info").empty();
-  } else if (selectedDate <= new Date()) {
-    showWarning("Введённая дата уже наступила.");
-  } else if (MAX_DATE - selectedDate < 0) {
-    showWarning(`Дата не должна быть позже ${MAX_DATE.toLocaleDateString("ru-RU")}.`);
+  if (!$(this).val()) {
+    clearText();
   } else {
-    showInfo(selectedDate);
-    timerId = setInterval(() => updateTime(selectedDate), 1000);
+    let selectedDate = new Date($(this).val());
+    selectedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(),
+                            0, 0, 0);
+
+    if (selectedDate <= new Date()) {
+      showWarning('Введённая дата уже наступила.');
+    } else if (MAX_DATE - selectedDate < 0) {
+      showWarning(`Дата не должна быть позже ${MAX_DATE.toLocaleDateString('ru-RU')}.`);
+    } else {
+      showInfo(selectedDate);
+      timerId = setInterval(() => updateTime(selectedDate), 1000);
+    }
   }
 });
 
+// получение номера дня в году
 function getNumDayOfYear(date) {
   return Math.floor((date - new Date(date.getFullYear(), 0, 0)) / MILLISECONDS_PER_DAY);
 }
 
+// получение номера недели в году
 function getNumWeekOfYear(date) {
   let n = getNumDayOfYear(date);
-  switch (new Date(date.getFullYear(), 0, 1).toLocaleDateString("en-us", { weekday: "long" })) {
-    case "Tuesday":
+  switch (new Date(date.getFullYear(), 0, 1).toLocaleDateString('en-us', { weekday: 'long' })) {
+    case 'Tuesday':
       n += 1;
       break;
-    case "Wednesday":
+    case 'Wednesday':
       n += 2;
       break;
-    case "Thursday":
+    case 'Thursday':
       n += 3;
       break;
-    case "Friday":
+    case 'Friday':
       n += 4;
       break;
-    case "Saturday":
+    case 'Saturday':
       n += 5;
       break;
-    case "Sunday":
+    case 'Sunday':
       n += 6;
   }
   return Math.ceil(n / 7);
 }
 
+/**
+ * Для расчета времени до наступления указанной даты используется библиотека moment.js.
+ * С помощью функции preciseDiff() можно получить разницу между датами в годах, месяцах,
+ * днях, минутах и секундах в виде словаря.
+ * Чтобы определить разницу в днях, используется ф-ия diff() из этой же библиотеки.
+ * Если расстояние до указанного дня больше 1 года, то оставшиеся дни считаются
+ * путем нахождения разности всех дней и количества лет, умноженных на 365.
+ */
 function getTimeLeft(date) {
   let momentDate = moment(date);
   let momentNow = moment(new Date());
