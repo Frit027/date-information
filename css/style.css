@@ -1,12 +1,11 @@
 .center {
-  display: block;
+  width: 100%;
+  transform: translate(0, 10rem);
+}
+.container {
+  width: auto;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-.container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
 }
